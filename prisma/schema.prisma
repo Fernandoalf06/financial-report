@@ -1,0 +1,136 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String         @id @default(cuid())
+  username     String         @unique
+  passwordHash String
+  globalRole   String         @default("USER") // "SUPERADMIN" | "USER"
+  divisionRole String         @default("VIEWER") // "HEAD" | "EDITOR" | "VIEWER"
+  divisionId   String?
+  division     Division?      @relation(fields: [divisionId], references: [id])
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  
+  auditLogs    AuditLog[]     // Still tracks exactly who made an action
+}
+
+model Division {
+  id           String         @id @default(cuid())
+  name         String         @unique
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  users        User[]
+  categories   Category[]
+  transactions Transaction[]
+  budgets      Budget[]
+  goals        Goal[]
+  auditLogs    AuditLog[]
+  recurringTxs RecurringTransaction[]
+}
+
+model Category {
+  id           String         @id @default(cuid())
+  name         String
+  color        String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  
+  divisionId   String
+  division     Division       @relation(fields: [divisionId], references: [id], onDelete: Cascade)
+  
+  transactions Transaction[]
+  budgets      Budget[]
+  recurringTxs RecurringTransaction[]
+
+  @@unique([name, divisionId])
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  description String
+  amount      Float
+  date        DateTime
+  type        String   // "income" | "expense"
+  receiptUrl  String?
+  
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  
+  divisionId  String
+  division    Division @relation(fields: [divisionId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Budget {
+  id          String   @id @default(cuid())
+  amount      Float
+  startDate   DateTime
+  endDate     DateTime
+  
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  divisionId  String
+  division    Division @relation(fields: [divisionId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model RecurringTransaction {
+  id          String   @id @default(cuid())
+  description String
+  amount      Float
+  type        String   // "income" | "expense"
+  frequency   String   // "DAILY" | "WEEKLY" | "MONTHLY"
+  nextDate    DateTime
+  
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  divisionId  String
+  division    Division @relation(fields: [divisionId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Goal {
+  id            String   @id @default(cuid())
+  name          String
+  targetAmount  Float
+  currentAmount Float    @default(0)
+  deadline      DateTime?
+  color         String   @default("#6366f1")
+
+  divisionId    String
+  division      Division @relation(fields: [divisionId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String   // "CREATE" | "UPDATE" | "DELETE"
+  entity    String   // "Transaction" | "Category" | "Budget"
+  entityId  String
+  details   String?  // Optional JSON string payload
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  divisionId String
+  division   Division @relation(fields: [divisionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+}
