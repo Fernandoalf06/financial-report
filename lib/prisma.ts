@@ -7,7 +7,12 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 const createPrismaClient = () => {
-  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  // Config for serverless: prevent connection sprawl
+  const pool = new Pool({ 
+    connectionString: process.env.DATABASE_URL,
+    max: 10,
+    connectionTimeoutMillis: 5000,
+  });
   const adapter = new PrismaPg(pool);
   return new PrismaClient({ adapter });
 };
