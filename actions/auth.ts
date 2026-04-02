@@ -63,8 +63,11 @@ export async function registerTenant(data: { username: string, passwordHash: str
       return { success: true, data: newUser }
     }
 
-  } catch (error) {
-    console.error("Failed to register user:", error)
-    return { success: false, error: "Gagal mendaftarkan akun." }
+  } catch (error: any) {
+    console.error("Failed to register user:", error);
+    return { 
+      success: false, 
+      error: `Gagal mendaftarkan akun. Detail: ${error?.message || "Kesalahan sistem tidak dikenal"}` 
+    };
   }
 }
