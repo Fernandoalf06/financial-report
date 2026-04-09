@@ -38,7 +38,6 @@ export default function AddTransactionModal({ onAdd }: AddTransactionModalProps)
     type: "" as TransactionType,
     amount: "",
   });
-  const [file, setFile] = useState<File | null>(null);
 
   function handleChange(key: keyof typeof form, value: string) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -48,28 +47,6 @@ export default function AddTransactionModal({ onAdd }: AddTransactionModalProps)
     e.preventDefault();
     setLoading(true);
 
-    let receiptUrl = undefined;
-    if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
-      try {
-        const res = await fetch("/api/upload", {
-          method: "POST",
-          body: formData,
-        });
-        const data = await res.json();
-        if (data.success) {
-          receiptUrl = data.url;
-        } else {
-          throw new Error(data.error || "Gagal upload file");
-        }
-      } catch (err: any) {
-        alert("Gagal mengunggah struk: " + err.message);
-        setLoading(false);
-        return;
-      }
-    }
-
     const newTx: Transaction = {
       id: Date.now().toString(),
       date: form.date,
@@ -77,13 +54,11 @@ export default function AddTransactionModal({ onAdd }: AddTransactionModalProps)
       category: form.category as TransactionCategory,
       type: form.type as TransactionType,
       amount: parseFloat(form.amount),
-      receiptUrl
     };
 
     onAdd(newTx);
     setLoading(false);
     setOpen(false);
-    setFile(null);
     setForm({
       date: new Date().toISOString().split("T")[0],
       description: "",
@@ -204,17 +179,6 @@ export default function AddTransactionModal({ onAdd }: AddTransactionModalProps)
               min="1"
               required
               className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
-            />
-          </div>
-
-          {/* Receipt Upload */}
-          <div className="space-y-1.5 pt-1">
-            <Label className="text-slate-300 text-sm">Upload Struk (Opsional)</Label>
-            <Input
-              type="file"
-              accept="image/*,application/pdf"
-              onChange={(e) => setFile(e.target.files?.[0] || null)}
-              className="bg-white/5 border-white/10 text-white cursor-pointer file:cursor-pointer file:text-indigo-400 file:bg-transparent file:border-0 file:text-sm file:font-semibold"
             />
           </div>
 

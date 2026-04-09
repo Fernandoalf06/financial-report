@@ -26,7 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ArrowUpCircle, ArrowDownCircle, Search, ArrowUpDown, Paperclip } from "lucide-react";
+import { ArrowUpCircle, ArrowDownCircle, Search, ArrowUpDown } from "lucide-react";
 import AddTransactionModal from "./AddTransactionModal";
 import CategoryManagerModal from "./CategoryManagerModal";
 import ExportButtons from "./ExportButtons";
@@ -58,7 +58,6 @@ export default function TransactionTable() {
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const [filterType, setFilterType] = useState<string>("all");
   const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
-  const [viewReceiptUrl, setViewReceiptUrl] = useState<string | null>(null);
 
   // Get unique categories for the dropdown from transactions
   const uniqueCategories = useMemo(() => {
@@ -183,15 +182,6 @@ export default function TransactionTable() {
                 <TableCell className="text-white text-sm font-medium max-w-[200px] truncate">
                   <div className="flex items-center gap-2">
                     <span className="truncate">{tx.description}</span>
-                    {tx.receiptUrl && (
-                      <button
-                        onClick={() => setViewReceiptUrl(tx.receiptUrl!)}
-                        className="text-indigo-400 hover:text-indigo-300 transition-colors shrink-0"
-                        title="Lihat Struk"
-                      >
-                        <Paperclip className="w-3.5 h-3.5" />
-                      </button>
-                    )}
                   </div>
                 </TableCell>
                 <TableCell>
@@ -244,47 +234,6 @@ export default function TransactionTable() {
           </TableBody>
         </Table>
       </div>
-
-      {/* Receipt Viewer Lightbox */}
-      <Dialog open={!!viewReceiptUrl} onOpenChange={(open) => !open && setViewReceiptUrl(null)}>
-        <DialogContent className="bg-slate-900 border-white/10 text-white max-w-2xl max-h-[90vh] flex flex-col">
-          <DialogHeader>
-            <DialogTitle className="text-white flex items-center gap-2">
-              <Paperclip className="w-4 h-4 text-indigo-400" />
-              Bukti Transaksi
-            </DialogTitle>
-          </DialogHeader>
-          <div className="flex-1 overflow-auto mt-2 rounded-lg bg-black/50 flex items-center justify-center min-h-[400px]">
-            {viewReceiptUrl?.toLowerCase().endsWith(".pdf") ? (
-              <iframe
-                src={viewReceiptUrl}
-                className="w-full h-[60vh] rounded-lg"
-                title="Struk PDF"
-              />
-            ) : viewReceiptUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={viewReceiptUrl}
-                alt="Struk Transaksi"
-                className="max-w-full max-h-[70vh] object-contain"
-              />
-            ) : null}
-          </div>
-          <div className="mt-4 flex justify-end">
-             {viewReceiptUrl && (
-               <a 
-                 href={viewReceiptUrl} 
-                 download 
-                 target="_blank" 
-                 rel="noreferrer"
-                 className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-white/10 bg-transparent hover:bg-white/5 hover:text-white h-10 px-4 py-2 text-slate-300"
-               >
-                 Unduh / Buka Penuh
-               </a>
-             )}
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

@@ -30,6 +30,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return null;
           }
 
+          // Block unverified emails
+          if (!user.emailVerified) {
+            return null;
+          }
+
           const isValid = await bcrypt.compare(password, user.passwordHash);
 
           if (!isValid) {
@@ -39,6 +44,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return {
             id: user.id,
             name: user.username,
+            email: user.email,
             globalRole: user.globalRole,
             divisionRole: user.divisionRole,
             divisionId: user.divisionId,

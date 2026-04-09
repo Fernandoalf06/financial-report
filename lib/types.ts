@@ -10,7 +10,6 @@ export interface Transaction {
   category: string;
   type: TransactionType;
   amount: number; // in IDR
-  receiptUrl?: string;
 }
 
 export interface MonthlyData {

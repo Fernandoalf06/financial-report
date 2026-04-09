@@ -5,13 +5,14 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AlertCircle, TrendingUp, Lock, CheckCircle2 } from "lucide-react";
+import { AlertCircle, TrendingUp, Lock, CheckCircle2, Mail } from "lucide-react";
 import Link from "next/link";
 import { registerTenant } from "@/actions/auth";
 
 export default function RegisterPage() {
   const router = useRouter();
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [isHead, setIsHead] = useState(false);
@@ -37,15 +38,17 @@ export default function RegisterPage() {
       return;
     }
 
-    if (isHead && divisionName.trim() === "") {
-      setError("Nama Divisi harus diisi jika Anda mendaftar sebagai Kepala Divisi.");
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Format email tidak valid.");
       setLoading(false);
       return;
     }
 
     const payload = isHead 
-      ? { username, passwordHash: password, divisionName }
-      : { username, passwordHash: password };
+      ? { username, email, passwordHash: password, divisionName }
+      : { username, email, passwordHash: password };
 
     const result = await registerTenant(payload);
 
@@ -55,9 +58,6 @@ export default function RegisterPage() {
       setError(result.error || "Gagal membuat akun.");
     } else {
       setSuccess(true);
-      setTimeout(() => {
-        router.push("/login?registered=true");
-      }, 2000);
     }
   }
 
@@ -86,10 +86,30 @@ export default function RegisterPage() {
           {/* Success Message */}
           {success ? (
             <div className="flex flex-col items-center justify-center gap-4 text-center py-4 animate-in fade-in zoom-in duration-300">
-              <CheckCircle2 className="w-16 h-16 text-emerald-500" />
-              <div className="space-y-1">
+              <div className="relative">
+                <div className="w-20 h-20 rounded-full bg-emerald-500/10 border-2 border-emerald-500/30 flex items-center justify-center">
+                  <Mail className="w-10 h-10 text-emerald-500" />
+                </div>
+                <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-emerald-500 flex items-center justify-center">
+                  <CheckCircle2 className="w-4 h-4 text-white" />
+                </div>
+              </div>
+              <div className="space-y-2">
                 <h3 className="text-lg font-semibold text-white">Pendaftaran Berhasil!</h3>
-                <p className="text-slate-400 text-sm">Mengalihkan ke halaman login...</p>
+                <p className="text-slate-400 text-sm max-w-xs">
+                  Kami telah mengirimkan email verifikasi ke alamat email Anda. 
+                  Silakan buka email tersebut dan klik link verifikasi untuk mengaktifkan akun Anda.
+                </p>
+              </div>
+              <div className="mt-2 space-y-2 w-full">
+                <Link href="/login">
+                  <Button className="w-full h-11 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold rounded-lg shadow-lg shadow-indigo-500/25 transition-all duration-200">
+                    Ke Halaman Login
+                  </Button>
+                </Link>
+                <p className="text-xs text-slate-500 text-center">
+                  Tidak menerima email? Periksa folder spam Anda.
+                </p>
               </div>
             </div>
           ) : (
@@ -157,6 +177,25 @@ export default function RegisterPage() {
                     autoComplete="username"
                     className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 focus:border-indigo-500 focus:ring-indigo-500/20 h-11"
                   />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-slate-300 text-sm font-medium">
+                    Email
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="contoh@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    autoComplete="email"
+                    className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 focus:border-indigo-500 focus:ring-indigo-500/20 h-11"
+                  />
+                  <p className="text-xs text-slate-500">
+                    Email ini akan digunakan untuk verifikasi akun dan reset password.
+                  </p>
                 </div>
 
                 <div className="space-y-2">

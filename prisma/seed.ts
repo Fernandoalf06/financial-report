@@ -20,7 +20,9 @@ async function main() {
     update: {},
     create: {
       username: 'superadmin',
+      email: 'superadmin@financial-dashboard.local',
       passwordHash,
+      emailVerified: true,
       globalRole: 'SUPERADMIN',
     },
   })
@@ -43,7 +45,9 @@ async function main() {
     update: {},
     create: {
       username: 'admin',
+      email: 'admin@financial-dashboard.local',
       passwordHash: headPassword,
+      emailVerified: true,
       globalRole: 'USER',
       divisionRole: 'HEAD',
       divisionId: divisionPusat.id

@@ -7,17 +7,20 @@ datasource db {
 }
 
 model User {
-  id           String         @id @default(cuid())
-  username     String         @unique
-  passwordHash String
-  globalRole   String         @default("USER") // "SUPERADMIN" | "USER"
-  divisionRole String         @default("VIEWER") // "HEAD" | "EDITOR" | "VIEWER"
-  divisionId   String?
-  division     Division?      @relation(fields: [divisionId], references: [id])
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  id             String               @id @default(cuid())
+  username       String               @unique
+  email          String               @unique
+  passwordHash   String
+  emailVerified  Boolean              @default(false)
+  globalRole     String               @default("USER") // "SUPERADMIN" | "USER"
+  divisionRole   String               @default("VIEWER") // "HEAD" | "EDITOR" | "VIEWER"
+  divisionId     String?
+  division       Division?            @relation(fields: [divisionId], references: [id])
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
   
-  auditLogs    AuditLog[]     // Still tracks exactly who made an action
+  auditLogs      AuditLog[]
+  verificationTokens VerificationToken[]
 }
 
 model Division {
@@ -58,7 +61,6 @@ model Transaction {
   amount      Float
   date        DateTime
   type        String   // "income" | "expense"
-  receiptUrl  String?
   
   categoryId  String
   category    Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
@@ -132,5 +134,15 @@ model AuditLog {
   divisionId String
   division   Division @relation(fields: [divisionId], references: [id], onDelete: Cascade)
 
+  createdAt DateTime @default(now())
+}
+
+model VerificationToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  type      String   // "EMAIL_VERIFY" | "PASSWORD_RESET"
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
   createdAt DateTime @default(now())
 }

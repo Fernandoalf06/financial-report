@@ -62,7 +62,6 @@ export function TransactionProvider({
       date: tx.date,
       type: tx.type,
       category: tx.category,
-      receiptUrl: tx.receiptUrl,
     });
     
     if (!res.success) {
@@ -83,7 +82,6 @@ export function TransactionProvider({
       date: updated.date,
       type: updated.type,
       category: updated.category,
-      receiptUrl: updated.receiptUrl,
     });
 
     if (!res.success) {

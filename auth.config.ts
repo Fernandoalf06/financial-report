@@ -28,6 +28,7 @@ export const authConfig = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.email = user.email;
         token.globalRole = (user as any).globalRole;
         token.divisionRole = (user as any).divisionRole;
         token.divisionId = (user as any).divisionId;
@@ -37,6 +38,7 @@ export const authConfig = {
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string;
+        session.user.email = token.email as string;
         (session.user as any).globalRole = token.globalRole;
         (session.user as any).divisionRole = token.divisionRole;
         (session.user as any).divisionId = token.divisionId;

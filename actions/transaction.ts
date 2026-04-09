@@ -22,7 +22,6 @@ export async function getTransactions() {
       date: tx.date.toISOString(),
       type: tx.type,
       category: tx.category.name,
-      receiptUrl: tx.receiptUrl
     }))
     
     return { success: true, data: mapped }
@@ -38,7 +37,6 @@ export async function addTransaction(data: {
   date: string
   type: "income" | "expense"
   category: string
-  receiptUrl?: string
 }) {
   try {
     const user = await requireEditor()
@@ -60,7 +58,6 @@ export async function addTransaction(data: {
         type: data.type,
         categoryId: categoryRecord.id,
         divisionId: user.divisionId,
-        receiptUrl: data.receiptUrl
       }
     })
     
@@ -78,7 +75,6 @@ export async function updateTransaction(id: string, data: Partial<{
   date: string
   type: "income" | "expense"
   category: string
-  receiptUrl: string
 }>) {
   try {
     const user = await requireEditor()
@@ -102,7 +98,6 @@ export async function updateTransaction(id: string, data: Partial<{
         amount: data.amount,
         date: data.date ? new Date(data.date) : undefined,
         type: data.type,
-        receiptUrl: data.receiptUrl,
         ...(categoryId && { categoryId })
       }
     })

@@ -40,7 +40,6 @@ export default function EditTransactionModal({
     type: transaction.type as string,
     amount: String(transaction.amount),
   });
-  const [file, setFile] = useState<File | null>(null);
 
   // Sync form when the transaction prop changes (e.g. external update)
   useEffect(() => {
@@ -63,28 +62,6 @@ export default function EditTransactionModal({
     e.preventDefault();
     setLoading(true);
 
-    let receiptUrl = transaction.receiptUrl;
-    if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
-      try {
-        const res = await fetch("/api/upload", {
-          method: "POST",
-          body: formData,
-        });
-        const data = await res.json();
-        if (data.success) {
-          receiptUrl = data.url;
-        } else {
-          throw new Error(data.error || "Gagal upload file");
-        }
-      } catch (err: any) {
-        alert("Gagal mengunggah struk: " + err.message);
-        setLoading(false);
-        return;
-      }
-    }
-
     const updated: Transaction = {
       ...transaction,
       date: form.date,
@@ -92,13 +69,11 @@ export default function EditTransactionModal({
       category: form.category as TransactionCategory,
       type: form.type as TransactionType,
       amount: parseFloat(form.amount),
-      receiptUrl
     };
 
     onSave(updated);
     setLoading(false);
     setOpen(false);
-    setFile(null);
   }
 
   const isValid =
@@ -219,29 +194,12 @@ export default function EditTransactionModal({
               />
             </div>
 
-            {/* Receipt Upload */}
-            <div className="space-y-1.5 pt-1">
-              <Label className="text-slate-300 text-sm">Upload Struk Baru (Opsional)</Label>
-              {transaction.receiptUrl && (
-                <p className="text-xs text-indigo-400 mb-1">
-                  Struk saat ini sudah terlampir. Upload file baru untuk menggantinya.
-                </p>
-              )}
-              <Input
-                type="file"
-                accept="image/*,application/pdf"
-                onChange={(e) => setFile(e.target.files?.[0] || null)}
-                className="bg-white/5 border-white/10 text-white cursor-pointer file:cursor-pointer file:text-indigo-400 file:bg-transparent file:border-0 file:text-sm file:font-semibold"
-              />
-            </div>
-
             {/* Changed indicator */}
             {(form.amount !== String(transaction.amount) ||
               form.description !== transaction.description ||
               form.category !== transaction.category ||
               form.type !== transaction.type ||
-              form.date !== transaction.date ||
-              file !== null) && (
+              form.date !== transaction.date) && (
               <p className="text-xs text-amber-400/80 flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
                 Ada perubahan yang belum disimpan
