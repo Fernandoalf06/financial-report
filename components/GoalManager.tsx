@@ -259,7 +259,7 @@ export function GoalManager({
                   
                   {/* Actions Dropdown / Icons */}
                   {isEditor && (
-                    <div className="flex items-center gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                       <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-white hover:bg-white/10" onClick={() => handleOpenEdit(goal)}>
                         <Edit2 className="w-4 h-4" />
                       </Button>

@@ -96,7 +96,7 @@ export default function EditTransactionModal({
       </button>
 
       <Dialog open={open} onOpenChange={(isOpen) => setOpen(isOpen)}>
-        <DialogContent className="bg-slate-900 border-white/10 text-white max-w-md">
+        <DialogContent className="bg-slate-900 border-white/10 text-white w-[95vw] max-w-md max-h-[85vh] overflow-y-auto sm:w-full">
           <DialogHeader>
             <DialogTitle className="text-white text-lg flex items-center gap-2">
               <Pencil className="w-4 h-4 text-indigo-400" />

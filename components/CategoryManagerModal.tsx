@@ -250,7 +250,7 @@ export default function CategoryManagerModal() {
         }
       />
 
-      <DialogContent className="bg-slate-900 border-white/10 text-white max-w-md">
+      <DialogContent className="bg-slate-900 border-white/10 text-white w-[95vw] max-w-md max-h-[85vh] overflow-y-auto sm:w-full">
         <DialogHeader>
           <DialogTitle className="text-white font-semibold flex items-center gap-2">
             <Settings className="w-4 h-4 text-indigo-400" />

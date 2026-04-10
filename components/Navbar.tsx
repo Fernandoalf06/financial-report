@@ -2,7 +2,8 @@
 
 import { signOut } from "next-auth/react";
 import Link from "next/link";
-import { TrendingUp, LogOut, Calendar, User, ShieldAlert } from "lucide-react";
+import { useState } from "react";
+import { TrendingUp, LogOut, Calendar, User, ShieldAlert, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface NavbarProps {
@@ -11,6 +12,7 @@ interface NavbarProps {
 }
 
 export default function Navbar({ userName, globalRole }: NavbarProps) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const now = new Date();
   const formattedDate = now.toLocaleDateString("id-ID", {
     weekday: "long",
@@ -76,14 +78,57 @@ export default function Navbar({ userName, globalRole }: NavbarProps) {
               variant="ghost"
               size="sm"
               onClick={() => signOut({ callbackUrl: "/login" })}
-              className="text-slate-400 hover:text-white hover:bg-red-500/10 hover:border-red-500/20 border border-transparent transition-all duration-200"
+              className="text-slate-400 hover:text-white hover:bg-red-500/10 hover:border-red-500/20 border border-transparent transition-all duration-200 hidden md:flex"
             >
               <LogOut className="w-4 h-4 mr-1.5" />
-              <span className="hidden sm:inline">Logout</span>
+              <span>Logout</span>
+            </Button>
+
+            {/* Mobile Menu Toggle */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden text-slate-400 hover:text-white"
+            >
+              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </Button>
           </div>
         </div>
       </div>
+
+      {/* Mobile Nav Drawer */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden border-t border-white/5 bg-slate-900/95 backdrop-blur-xl px-4 py-4 space-y-3 shadow-2xl">
+          <Link href="/dashboard" className="block text-sm font-medium text-slate-300 hover:text-white p-2 rounded-lg hover:bg-white/5 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>Ringkasan</Link>
+          <Link href="/dashboard/analytics" className="block text-sm font-medium text-slate-300 hover:text-white p-2 rounded-lg hover:bg-white/5 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>Analitik</Link>
+          <Link href="/dashboard/goals" className="block text-sm font-medium text-slate-300 hover:text-white p-2 rounded-lg hover:bg-white/5 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>Target</Link>
+          <Link href="/dashboard/recurring" className="block text-sm font-medium text-slate-300 hover:text-white p-2 rounded-lg hover:bg-white/5 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>Otomasi</Link>
+          <Link href="/dashboard/users" className="block text-sm font-medium text-slate-300 hover:text-white p-2 rounded-lg hover:bg-white/5 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>Anggota</Link>
+          
+          {globalRole === "SUPERADMIN" && (
+            <Link href="/superadmin" className="mt-2 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-rose-400 bg-rose-500/10 border border-rose-500/20 px-3 py-2 rounded-lg hover:bg-rose-500/20 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
+              <ShieldAlert className="w-4 h-4" /> System Console
+            </Link>
+          )}
+
+          <div className="pt-3 mt-3 border-t border-white/10 flex justify-between items-center">
+            <div className="flex items-center gap-2 text-slate-400 text-sm">
+               <Calendar className="w-4 h-4" />
+               <span>{formattedDate}</span>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => signOut({ callbackUrl: "/login" })}
+              className="text-red-400 border-red-400/20 hover:bg-red-500/10 hover:text-red-300 hover:border-red-500/30"
+            >
+              <LogOut className="w-4 h-4 mr-1.5" />
+              Keluar
+            </Button>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

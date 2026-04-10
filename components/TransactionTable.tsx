@@ -217,7 +217,7 @@ export default function TransactionTable() {
                 </TableCell>
                 {/* Edit + Delete — appear on row hover */}
                 <TableCell className="text-center pr-4">
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-end gap-0.5">
+                  <div className="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity flex items-center justify-end gap-0.5">
                     <EditTransactionModal
                       transaction={tx}
                       onSave={updateTransaction}

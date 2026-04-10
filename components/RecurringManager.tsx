@@ -250,7 +250,7 @@ export function RecurringManager({
                      </div>
 
                      {isHead && (
-                       <Button variant="ghost" size="icon" onClick={() => handleDelete(item.id)} className="opacity-100 sm:opacity-0 group-hover:opacity-100 h-8 w-8 text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition">
+                       <Button variant="ghost" size="icon" onClick={() => handleDelete(item.id)} className="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 h-8 w-8 text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition">
                          <Trash2 className="w-4 h-4" />
                        </Button>
                      )}

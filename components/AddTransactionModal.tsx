@@ -85,7 +85,7 @@ export default function AddTransactionModal({ onAdd }: AddTransactionModalProps)
           </Button>
         }
       />
-      <DialogContent className="bg-slate-900 border-white/10 text-white max-w-md">
+      <DialogContent className="bg-slate-900 border-white/10 text-white w-[95vw] max-w-md max-h-[85vh] overflow-y-auto sm:w-full">
         <DialogHeader>
           <DialogTitle className="text-white text-lg">
             Tambah Transaksi Baru
