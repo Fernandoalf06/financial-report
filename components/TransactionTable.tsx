@@ -147,8 +147,8 @@ export default function TransactionTable() {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto">
+      {/* Desktop Table View */}
+      <div className="hidden md:block overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow className="border-white/5 hover:bg-transparent">
@@ -233,6 +233,52 @@ export default function TransactionTable() {
             )}
           </TableBody>
         </Table>
+      </div>
+
+      {/* Mobile Card List View */}
+      <div className="md:hidden flex flex-col divide-y divide-white/5">
+        {filteredTransactions.length === 0 ? (
+           <div className="p-8 text-center text-slate-400 text-sm">
+             Tidak ada transaksi yang cocok.
+           </div>
+        ) : (
+           filteredTransactions.map((tx) => (
+             <div key={tx.id} className="p-4 hover:bg-white/5 transition-colors">
+               <div className="flex justify-between items-start mb-2 gap-3">
+                 <div className="flex-1">
+                   <h4 className="text-white font-medium text-sm leading-tight line-clamp-2">{tx.description}</h4>
+                   <p className="text-slate-400 text-xs mt-1">{formatDate(tx.date)}</p>
+                 </div>
+                 <div className="text-right shrink-0">
+                   <div className={`font-bold text-sm ${tx.type === "income" ? "text-emerald-400" : "text-rose-400"}`}>
+                     {tx.type === "income" ? "+" : "-"}{formatIDR(tx.amount)}
+                   </div>
+                 </div>
+               </div>
+               
+               <div className="flex justify-between items-end mt-3">
+                 <div className="flex flex-wrap items-center gap-2">
+                   <Badge variant="outline" className="text-slate-300 border-white/10 bg-white/5 text-[10px] px-2 py-0">
+                     {tx.category}
+                   </Badge>
+                   {tx.type === "income" ? (
+                     <span className="inline-flex items-center gap-1 text-emerald-400 text-[10px] font-medium">
+                       <ArrowUpCircle className="w-3 h-3" /> Pemasukan
+                     </span>
+                   ) : (
+                     <span className="inline-flex items-center gap-1 text-rose-400 text-[10px] font-medium">
+                       <ArrowDownCircle className="w-3 h-3" /> Pengeluaran
+                     </span>
+                   )}
+                 </div>
+                 <div className="flex items-center gap-1 shrink-0">
+                   <EditTransactionModal transaction={tx} onSave={updateTransaction} />
+                   <DeleteTransactionDialog transaction={tx} onDelete={deleteTransaction} />
+                 </div>
+               </div>
+             </div>
+           ))
+        )}
       </div>
     </div>
   );
